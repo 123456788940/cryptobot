@@ -81,7 +81,7 @@ contract cryptoSnipingBot {
       }
 
       function sell(address player) external onlyOwner{
-        require(percentageDropToSell>= 10, "at least the percentage should be 10");
+        require(percentageDropToSell== 10, "at least the percentage should be 10");
                
        actions[msg.sender] = Actions({
            spine: true,
