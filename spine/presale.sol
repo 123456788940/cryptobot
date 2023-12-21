@@ -9,18 +9,17 @@ interface PresaleContract {
     function buyTokens(address buyer, uint256 amount) external;
 }
 
-contract CryptoSpineBot {
-    using SafeMath for uint256;
-
+contract cryptoSpineBot {
+    using SafeMath for uint;
     address public owner;
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not the owner");
+        require(msg.sender == owner, "Not the owner"); 
         _;
     }
 
     address public uniswapRouter;
-    uint256 public ethSpentPerRouter;
-    uint256 public percentageDropToSell;
+    uint public ethSpentPerRouter;
+    uint public percentageDropToSell;
     IERC20 public token;
 
     constructor(address _tokenAddress, address _uniswapRouter) {
@@ -31,6 +30,7 @@ contract CryptoSpineBot {
         owner = msg.sender;
     }
 
+
     function spine() external onlyOwner {
         address[] memory path = new address[](2);
         path[0] = IUniswapV2Router02(uniswapRouter).WETH();
@@ -40,8 +40,7 @@ contract CryptoSpineBot {
             ethSpentPerRouter,
             path
         );
-
-        uint256 tokenAmountOut = amounts[1];
+         uint256 tokenAmountOut = amounts[1];
         IUniswapV2Router02(uniswapRouter).swapExactETHForTokens{value: ethSpentPerRouter}(
               tokenAmountOut,
               path,
@@ -50,15 +49,16 @@ contract CryptoSpineBot {
         );
     }
 
-    function presale(uint256 _presaleAmount) external onlyOwner {
-        address presaleContract = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
+
+    function presale(uint _presaleAmount) external onlyOwner {
+         address presaleContract = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
         payable(presaleContract).transfer(_presaleAmount);
         PresaleContract(presaleContract).buyTokens(msg.sender, _presaleAmount);
     }
 
-    function sell() external onlyOwner {
-        uint256 tokenBalance = token.balanceOf(address(this));
-        uint256 tokensToSell = tokenBalance.mul(percentageDropToSell).div(100);
+     function sell() external onlyOwner {
+        uint tokenBalance = token.balanceOf(address(this));
+        uint tokensToSell = tokenBalance.mul(percentageDropToSell).div(100);
         token.approve(uniswapRouter, tokensToSell);
 
         address[] memory path = new address[](2);
@@ -79,23 +79,23 @@ contract CryptoSpineBot {
 
         // Step 1: Transfer some ETH to the presale contract
         address presaleContract = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
-        uint256 ethForPresale = 5 ether; // Replace with the desired amount
+        uint ethForPresale = 5 ether; // Replace with the desired amount
         payable(presaleContract).transfer(ethForPresale);
 
         // Step 2: Call the buyTokens function on the PresaleContract
-        uint256 tokensToPurchase = 1000; // Replace with the desired amount
+        uint tokensToPurchase = 1000; // Replace with the desired amount
         PresaleContract(presaleContract).buyTokens(msg.sender, tokensToPurchase);
     }
 
     function scan() external onlyOwner view {
-        uint256 initialTokenBalance = token.balanceOf(address(this));
+        uint initialTokenBalance = token.balanceOf(address(this));
         require(initialTokenBalance > 0, "Scan: no tokens to scan");
 
         // Simulate a transaction that might trigger the scan logic
         simulatePresale();
 
         // Check the updated token balance after the simulated transaction
-        uint256 updatedTokenBalance = token.balanceOf(address(this));
+        uint updatedTokenBalance = token.balanceOf(address(this));
 
         // If there is a significant increase in token balance, trigger an alert
         require(
@@ -104,3 +104,4 @@ contract CryptoSpineBot {
         );
     }
 }
+
