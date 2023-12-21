@@ -74,12 +74,25 @@ contract CryptoSpineBot {
         );
     }
 
-    function scan() external onlyOwner view{
+    function simulatePresale() external onlyOwner {
+        // Simulate a presale transaction logic here
+
+        // Step 1: Transfer some ETH to the presale contract
+        address presaleContract = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
+        uint256 ethForPresale = 5 ether; // Replace with the desired amount
+        payable(presaleContract).transfer(ethForPresale);
+
+        // Step 2: Call the buyTokens function on the PresaleContract
+        uint256 tokensToPurchase = 1000; // Replace with the desired amount
+        PresaleContract(presaleContract).buyTokens(msg.sender, tokensToPurchase);
+    }
+
+    function scan() external onlyOwner view {
         uint256 initialTokenBalance = token.balanceOf(address(this));
         require(initialTokenBalance > 0, "Scan: no tokens to scan");
 
         // Simulate a transaction that might trigger the scan logic
-      
+        simulatePresale();
 
         // Check the updated token balance after the simulated transaction
         uint256 updatedTokenBalance = token.balanceOf(address(this));
@@ -89,7 +102,5 @@ contract CryptoSpineBot {
             updatedTokenBalance <= initialTokenBalance.mul(110).div(100),
             "Scan: Potential issue detected"
         );
-
-        
     }
 }
