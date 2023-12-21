@@ -68,7 +68,7 @@ contract cryptoSnipingBot {
 
       function scan() external onlyOwner{
         require(amount >= 100, "amount has to be at least 100");
-        require(!actions[msg.sender].placeForPreSale, "spine not done yet");
+        require(!actions[msg.sender].scanned, "spine not done yet");
 
        actions[msg.sender] = Actions({
            spine: true,
