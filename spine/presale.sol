@@ -2,106 +2,98 @@
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-
-interface PresaleContract {
-    function buyTokens(address buyer, uint256 amount) external;
-}
-
-contract cryptoSpineBot {
+contract cryptoSnipingBot {
     using SafeMath for uint;
     address public owner;
+    IERC20 public token;
+    uint public percentageDropToSell;
+    uint amount;
+
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not the owner"); 
+        require(msg.sender == owner, "Not the owner");
         _;
     }
 
-    address public uniswapRouter;
-    uint public ethSpentPerRouter;
-    uint public percentageDropToSell;
-    IERC20 public token;
 
-    constructor(address _tokenAddress, address _uniswapRouter) {
+    constructor(address _tokenAddress, uint _amount) {
         token = IERC20(_tokenAddress);
-        uniswapRouter = _uniswapRouter;
-        ethSpentPerRouter = 1 ether;
-        percentageDropToSell = 10;
         owner = msg.sender;
+        percentageDropToSell = 10;
+        amount = _amount;
+
     }
 
+    struct Actions {
+        bool sell;
+        bool spine;
+        bool placeForPreSale;
+        bool scanned;
+        bool sold;
+    }
+
+    mapping(address => Actions) public actions;
 
     function spine() external onlyOwner {
-        address[] memory path = new address[](2);
-        path[0] = IUniswapV2Router02(uniswapRouter).WETH();
-        path[1] = address(token);
+       require(amount >= 100, "amount must be 100 at least");
+       require(!actions[msg.sender].spine, "spine not done yet");
 
-        uint[] memory amounts = IUniswapV2Router02(uniswapRouter).getAmountsOut(
-            ethSpentPerRouter,
-            path
-        );
-         uint256 tokenAmountOut = amounts[1];
-        IUniswapV2Router02(uniswapRouter).swapExactETHForTokens{value: ethSpentPerRouter}(
-              tokenAmountOut,
-              path,
-              address(this),
-              block.timestamp
-        );
+       actions[msg.sender] = Actions({
+           spine: true,
+           sell: false, 
+           placeForPreSale: false,
+           scanned: false,
+           sold: false
+       });
+
     }
 
+      function preSale() external onlyOwner{
+        require(amount >= 100, "amount has to be at leat 100");
+         require(!actions[msg.sender].placeForPreSale, "spine not done yet");
 
-    function presale(uint _presaleAmount) external onlyOwner {
-         address presaleContract = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
-        payable(presaleContract).transfer(_presaleAmount);
-        PresaleContract(presaleContract).buyTokens(msg.sender, _presaleAmount);
-    }
+       actions[msg.sender] = Actions({
+           spine: true,
+           sell: true, 
+           placeForPreSale: false,
+           scanned: false,
+           sold: false
+       });
 
-     function sell() external onlyOwner {
-        uint tokenBalance = token.balanceOf(address(this));
-        uint tokensToSell = tokenBalance.mul(percentageDropToSell).div(100);
-        token.approve(uniswapRouter, tokensToSell);
 
-        address[] memory path = new address[](2);
-        path[0] = address(token);
-        path[1] = IUniswapV2Router02(uniswapRouter).WETH();
+            token.transferFrom(msg.sender, address(this), amount);
 
-        IUniswapV2Router02(uniswapRouter).swapExactTokensForETH(
-            tokensToSell,
-            0, // Accept any amount of ETH
-            path,
-            address(this),
-            block.timestamp
-        );
-    }
+      }
 
-    function simulatePresale() external onlyOwner {
-        // Simulate a presale transaction logic here
 
-        // Step 1: Transfer some ETH to the presale contract
-        address presaleContract = address(0xd9145CCE52D386f254917e481eB44e9943F39138);
-        uint ethForPresale = 5 ether; // Replace with the desired amount
-        payable(presaleContract).transfer(ethForPresale);
+      function scan() external onlyOwner{
+        require(amount >= 100, "amount has to be at least 100");
+        require(!actions[msg.sender].placeForPreSale, "spine not done yet");
 
-        // Step 2: Call the buyTokens function on the PresaleContract
-        uint tokensToPurchase = 1000; // Replace with the desired amount
-        PresaleContract(presaleContract).buyTokens(msg.sender, tokensToPurchase);
-    }
+       actions[msg.sender] = Actions({
+           spine: true,
+           sell: true, 
+           placeForPreSale: true,
+           scanned: true,
+           sold: false
+       });
 
-    function scan() external onlyOwner view {
-        uint initialTokenBalance = token.balanceOf(address(this));
-        require(initialTokenBalance > 0, "Scan: no tokens to scan");
+      }
 
-        // Simulate a transaction that might trigger the scan logic
-        simulatePresale();
+      function sell(address player) external onlyOwner{
+        require(percentageDropToSell>= 10, "at least the percentage should be 10");
+               
+       actions[msg.sender] = Actions({
+           spine: true,
+           sell: true, 
+           placeForPreSale: true,
+           scanned: true,
+           sold: true
+       });
+          token.transferFrom(player, address(this), amount);
 
-        // Check the updated token balance after the simulated transaction
-        uint updatedTokenBalance = token.balanceOf(address(this));
 
-        // If there is a significant increase in token balance, trigger an alert
-        require(
-            updatedTokenBalance <= initialTokenBalance.mul(110).div(100),
-            "Scan: Potential issue detected"
-        );
-    }
+
+      }
+
 }
-
