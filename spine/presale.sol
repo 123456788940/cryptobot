@@ -32,6 +32,7 @@ contract cryptoSnipingBot {
         bool placeForPreSale;
         bool scanned;
         bool sold;
+        bool bought;
     }
 
     mapping(address => Actions) public actions;
@@ -45,7 +46,8 @@ contract cryptoSnipingBot {
            sell: false, 
            placeForPreSale: false,
            scanned: false,
-           sold: false
+           sold: false,
+           bought: false
        });
 
     }
@@ -56,10 +58,11 @@ contract cryptoSnipingBot {
 
        actions[msg.sender] = Actions({
            spine: true,
-           sell: true, 
-           placeForPreSale: false,
+           sell: false, 
+           placeForPreSale: true,
            scanned: false,
-           sold: false
+           sold: false,
+           bought: false
        });
 
 
@@ -77,7 +80,8 @@ contract cryptoSnipingBot {
            sell: true, 
            placeForPreSale: true,
            scanned: true,
-           sold: false
+           sold: false,
+           bought: false
        });
 
       }
@@ -90,7 +94,8 @@ contract cryptoSnipingBot {
            sell: true, 
            placeForPreSale: true,
            scanned: true,
-           sold: true
+           sold: true,
+           bought: false
        });
 
        uint initialTokenBalance = token.balanceOf(address(this));
@@ -105,6 +110,18 @@ contract cryptoSnipingBot {
           token.transfer(owner, receivedAmount);
 
 
+      }
+
+      function buy() external onlyOwner {
+        require(amount >= 0, "amount must be greater than 0");
+         actions[msg.sender] = Actions({
+           spine: true,
+           sell: true, 
+           placeForPreSale: true,
+           scanned: true,
+           sold: true,
+           bought: true
+       });
       }
 
       
