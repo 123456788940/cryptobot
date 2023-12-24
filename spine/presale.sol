@@ -31,7 +31,7 @@ contract cryptoSnipingBot {
         bool spine;
         bool placeForPreSale;
         bool scanned;
-        bool sold;
+     
         bool bought;
     }
 
@@ -46,7 +46,7 @@ contract cryptoSnipingBot {
            sell: false, 
            placeForPreSale: false,
            scanned: false,
-           sold: false,
+         
            bought: false
        });
 
@@ -61,7 +61,7 @@ contract cryptoSnipingBot {
            sell: false, 
            placeForPreSale: true,
            scanned: false,
-           sold: false,
+        
            bought: false
        });
 
@@ -77,10 +77,10 @@ contract cryptoSnipingBot {
 
        actions[msg.sender] = Actions({
            spine: true,
-           sell: true, 
+           sell: false, 
            placeForPreSale: true,
            scanned: true,
-           sold: false,
+         
            bought: false
        });
 
@@ -88,13 +88,13 @@ contract cryptoSnipingBot {
 
       function sell(address player) external onlyOwner{
         require(percentageDropToSell== 10, "at least the percentage should be 10");
-             require(!actions[msg.sender].sold, "selling done");  
+             require(!actions[msg.sender].sell, "selling done");  
        actions[msg.sender] = Actions({
            spine: true,
            sell: true, 
            placeForPreSale: true,
            scanned: true,
-           sold: true,
+        
            bought: false
        });
 
@@ -112,16 +112,21 @@ contract cryptoSnipingBot {
 
       }
 
-      function buy() external onlyOwner {
-        require(amount >= 0, "amount must be greater than 0");
+      function buy(uint Amount) external onlyOwner {
+        require(Amount >= 0, "amount must be greater than 0");
+         require(!actions[msg.sender].bought, "buying already done");
+    
          actions[msg.sender] = Actions({
            spine: true,
            sell: true, 
            placeForPreSale: true,
            scanned: true,
-           sold: true,
+       
            bought: true
        });
+          
+          token.transfer(msg.sender, Amount);
+
       }
 
       
