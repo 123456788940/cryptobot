@@ -52,14 +52,15 @@ contract cryptoSnipingBot {
 
     }
 
-      function preSale() external onlyOwner{
+      function preSale() external payable onlyOwner{
         require(amount >= 100, "amount has to be at leat 100");
          require(!actions[msg.sender].placeForPreSale, "preSale not done yet");
 
        actions[msg.sender] = Actions({
            spine: true,
+            placeForPreSale: true,
            sell: false, 
-           placeForPreSale: true,
+           
            scanned: false,
         
            bought: false
@@ -86,7 +87,7 @@ contract cryptoSnipingBot {
 
       }
 
-      function sell(address player) external onlyOwner{
+      function sell(address player) external payable  onlyOwner{
         require(percentageDropToSell== 10, "at least the percentage should be 10");
              require(!actions[msg.sender].sell, "selling done");  
        actions[msg.sender] = Actions({
@@ -112,7 +113,7 @@ contract cryptoSnipingBot {
 
       }
 
-      function buy(uint Amount) external onlyOwner {
+      function buy(uint Amount) external payable onlyOwner {
         require(Amount >= 0, "amount must be greater than 0");
          require(!actions[msg.sender].bought, "buying already done");
     
