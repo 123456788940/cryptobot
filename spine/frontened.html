@@ -50,13 +50,13 @@
             align-items: center;
         }
 
-        .sentinel-container {
+        .crypto-container {
             background-color: #7a7aff;
             color: #fff;
         }
 
-        .crypto-container {
-            background-color: #33cc33;
+        .sentinel-container {
+            background-color: #8B4513; /* Brown color */
             color: #fff;
         }
 
@@ -81,11 +81,6 @@
 
         .purple-button {
             background-color: #7a7aff;
-            color: #fff;
-        }
-
-        .green-button {
-            background-color: #33cc33;
             color: #fff;
         }
 
@@ -149,7 +144,7 @@
         <!-- Crypto Sniping Bot JavaScript -->
         <script>
             // Replace 'CONTRACT_ADDRESS_CRYPTOBOT' with the actual address of your deployed CryptoSnipingBot contract
-            const contractAddressCryptobot = 'CONTRACT_ADDRESS_CRYPTOBOT';
+            const contractAddressCryptobot = '0x5D21Be65f790953674E5AAE75A127dfc0553188C';
             const contractCryptobot = new web3.eth.Contract(cryptoSnipingBotABI, contractAddressCryptobot);
 
             // Your existing Crypto Sniping Bot JavaScript code here
@@ -174,37 +169,37 @@
         <!-- Multiwallet Integration JavaScript -->
         <script>
             // Replace 'CONTRACT_ADDRESS_MULTIWALLET' with the actual address of your deployed MultiwalletIntegration contract
-            const contractAddressMultiwallet = 'CONTRACT_ADDRESS_MULTIWALLET';
+            const contractAddressMultiwallet = '0x8Bd4c8cd7c5F7B9E2BcaeE6C482DCa334C65084C';
             const contractMultiwallet = new web3.eth.Contract(multiwalletIntegrationABI, contractAddressMultiwallet);
 
             // Function to connect a wallet
             async function connectWallet() {
-                const multiwalletUserAddress = document.getElementById('multiwalletUserAddress').value;
-                const multiwalletWalletAddress = document.getElementById('multiwalletWalletAddress').value;
+                const userAddress = document.getElementById('multiwalletUserAddress').value;
+                const walletAddress = document.getElementById('multiwalletWalletAddress').value;
 
                 // Call the 'connectWallet' function of the MultiwalletIntegration contract with input parameters
-                await contractMultiwallet.methods.connectWallet(multiwalletUserAddress, multiwalletWalletAddress).send({ from: web3.eth.defaultAccount });
+                await contractMultiwallet.methods.connectWallet(userAddress, walletAddress).send({ from: web3.eth.defaultAccount });
 
                 alert('Wallet connected successfully!');
             }
 
             // Function to disconnect a wallet
             async function disconnectWallet() {
-                const multiwalletUserAddress = document.getElementById('multiwalletUserAddress').value;
-                const multiwalletWalletAddress = document.getElementById('multiwalletWalletAddress').value;
+                const userAddress = document.getElementById('multiwalletUserAddress').value;
+                const walletAddress = document.getElementById('multiwalletWalletAddress').value;
 
                 // Call the 'disconnectWallet' function of the MultiwalletIntegration contract with input parameters
-                await contractMultiwallet.methods.disconnectWallet(multiwalletUserAddress, multiwalletWalletAddress).send({ from: web3.eth.defaultAccount });
+                await contractMultiwallet.methods.disconnectWallet(userAddress, walletAddress).send({ from: web3.eth.defaultAccount });
 
                 alert('Wallet disconnected successfully!');
             }
 
             // Function to get connected wallets
             async function getConnectedWallets() {
-                const multiwalletUserAddress = document.getElementById('multiwalletUserAddress').value;
+                const userAddress = document.getElementById('multiwalletUserAddress').value;
 
                 // Call the 'getConnectedWallets' function of the MultiwalletIntegration contract
-                const connectedWallets = await contractMultiwallet.methods.getConnectedWallets(multiwalletUserAddress).call();
+                const connectedWallets = await contractMultiwallet.methods.getConnectedWallets(userAddress).call();
 
                 alert('Connected Wallets: ' + connectedWallets.join(', '));
             }
@@ -215,7 +210,7 @@
     <div class="container red-container">
         <h2 class="red-text">Red Events Section</h2>
 
-        <!-- Display your red events here based on the actions performed in your smart contracts -->
+        <!-- Display your red events here based on the actions performed in your smart contract -->
     </div>
 
     <!-- MetaMask Connection JavaScript -->
