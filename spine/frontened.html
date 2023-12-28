@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Include ABIs -->
     <script src="path/to/sentinelModeABI.js"></script>
@@ -87,8 +88,26 @@
         .red-text {
             color: #ff5555;
         }
+
+        .message-container {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .error-message {
+            background-color: #ff5555;
+            color: #fff;
+        }
+
+        .success-message {
+            background-color: #7a7aff;
+            color: #fff;
+        }
     </style>
 </head>
+
 <body>
     <h1>Blockchain Bot Suite UI</h1>
 
@@ -109,6 +128,9 @@
         <input type="number" id="sentinelAmount" placeholder="Enter Amount">
 
         <button onclick="detectRisks()" class="purple-button">Detect Risks</button>
+
+        <!-- Message container for feedback -->
+        <div id="sentinelMessageContainer" class="message-container"></div>
     </div>
 
     <!-- Crypto Sniping Bot Section -->
@@ -118,8 +140,6 @@
         <!-- Your existing Crypto Sniping Bot HTML content -->
 
         <button onclick="spine()" class="purple-button">Spine</button>
-        <button onclick="preSale()" class="purple-button">Pre Sale</button>
-        <button onclick="scan()" class="purple-button">Scan</button>
 
         <label for="sellAddress">Sell Address:</label>
         <input type="text" id="sellAddress" placeholder="Enter Sell Address">
@@ -141,96 +161,98 @@
 
         <button onclick="setGasThreshold()" class="purple-button">Set Gas Threshold</button>
 
+        <!-- Message container for feedback -->
+        <div id="cryptoBotMessageContainer" class="message-container"></div>
+
         <!-- Crypto Sniping Bot JavaScript -->
         <script>
             // Replace 'CONTRACT_ADDRESS_CRYPTOBOT' with the actual address of your deployed CryptoSnipingBot contract
             const contractAddressCryptobot = '0x5D21Be65f790953674E5AAE75A127dfc0553188C';
             const contractCryptobot = new web3.eth.Contract(cryptoSnipingBotABI, contractAddressCryptobot);
 
-            // Your existing Crypto Sniping Bot JavaScript code here
-        </script>
-    </div>
-
-    <!-- Multiwallet Integration Section -->
-    <div class="container multiwallet-container">
-        <h2>Multiwallet Integration</h2>
-
-        <label for="multiwalletUserAddress">User Address:</label>
-        <input type="text" id="multiwalletUserAddress" placeholder="Enter User Address">
-
-        <label for="multiwalletWalletAddress">Wallet Address:</label>
-        <input type="text" id="multiwalletWalletAddress" placeholder="Enter Wallet Address">
-
-        <button onclick="connectWallet()" class="blue-button">Connect Wallet</button>
-        <button onclick="disconnectWallet()" class="blue-button">Disconnect Wallet</button>
-
-        <button onclick="getConnectedWallets()" class="blue-button">Get Connected Wallets</button>
-
-        <!-- Multiwallet Integration JavaScript -->
-        <script>
-            // Replace 'CONTRACT_ADDRESS_MULTIWALLET' with the actual address of your deployed MultiwalletIntegration contract
-            const contractAddressMultiwallet = '0x8Bd4c8cd7c5F7B9E2BcaeE6C482DCa334C65084C';
-            const contractMultiwallet = new web3.eth.Contract(multiwalletIntegrationABI, contractAddressMultiwallet);
-
-            // Function to connect a wallet
-            async function connectWallet() {
-                const userAddress = document.getElementById('multiwalletUserAddress').value;
-                const walletAddress = document.getElementById('multiwalletWalletAddress').value;
-
-                // Call the 'connectWallet' function of the MultiwalletIntegration contract with input parameters
-                await contractMultiwallet.methods.connectWallet(userAddress, walletAddress).send({ from: web3.eth.defaultAccount });
-
-                alert('Wallet connected successfully!');
+            // Function to perform Crypto Sniping Bot actions
+            function preSale() {
+                contractCryptobot.methods.preSale().send({ from: web3.eth.defaultAccount })
+                    .on('transactionHash', function (hash) {
+                        displayMessage(`Transaction Hash: ${hash}`, 'success');
+                    })
+                    .on('confirmation', function (confirmationNumber, receipt) {
+                        if (confirmationNumber === 1) {
+                            displayMessage('Pre-sale confirmed.', 'success');
+                        }
+                    })
+                    .on('error', function (error) {
+                        displayMessage(`Error: ${error.message}`, 'error');
+                    });
             }
 
-            // Function to disconnect a wallet
-            async function disconnectWallet() {
-                const userAddress = document.getElementById('multiwalletUserAddress').value;
-                const walletAddress = document.getElementById('multiwalletWalletAddress').value;
-
-                // Call the 'disconnectWallet' function of the MultiwalletIntegration contract with input parameters
-                await contractMultiwallet.methods.disconnectWallet(userAddress, walletAddress).send({ from: web3.eth.defaultAccount });
-
-                alert('Wallet disconnected successfully!');
-            }
-
-            // Function to get connected wallets
-            async function getConnectedWallets() {
-                const userAddress = document.getElementById('multiwalletUserAddress').value;
-
-                // Call the 'getConnectedWallets' function of the MultiwalletIntegration contract
-                const connectedWallets = await contractMultiwallet.methods.getConnectedWallets(userAddress).call();
-
-                alert('Connected Wallets: ' + connectedWallets.join(', '));
-            }
-        </script>
-    </div>
-
-    <!-- Red Events Section -->
-    <div class="container red-container">
-        <h2 class="red-text">Red Events Section</h2>
-
-        <!-- Display your red events here based on the actions performed in your smart contract -->
-    </div>
-
-    <!-- MetaMask Connection JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
-    <script>
-        // Function to connect to MetaMask
-        async function connectMetaMask() {
-            if (window.ethereum) {
-                try {
-                    // Request account access
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    alert('MetaMask connected successfully!');
-                } catch (error) {
-                    console.error('Error connecting to MetaMask:', error.message);
-                    alert('Error connecting to MetaMask');
+            function scan() {
+                // Replace this comment with your logic for the 'scan' action
+                // Example: contractCryptobot.methods.scan().send({ from: web3.eth.defaultAccount });
+                const properAmount = true; // Replace with your actual logic
+                if (properAmount) {
+                    displayMessage('Scan initiated.', 'success');
+                } else {
+                    displayMessage('Insufficient amount for scan.', 'error');
                 }
-            } else {
-                alert('MetaMask not detected. Please install MetaMask.');
             }
-        }
-    </script>
+
+            function sell() {
+                const sellAddress = document.getElementById('sellAddress').value;
+                // Replace this comment with your logic for the 'sell' action
+                // Example: contractCryptobot.methods.sell(sellAddress).send({ from: web3.eth.defaultAccount });
+                const percentageDrop = 10; // Replace with your actual logic
+                if (percentageDrop >= 10) {
+                    displayMessage('Sell initiated.', 'success');
+                } else {
+                    displayMessage('Percentage drop is less than 10%. Sell not initiated.', 'error');
+                }
+            }
+
+            function buy() {
+                const buyAmount = document.getElementById('buyAmount').value;
+                // Minimum buy amount check
+                if (buyAmount < 100) {
+                    displayMessage('Minimum buy amount is 100 tokens.', 'error');
+                    return;
+                }
+                // Replace this comment with your logic for the 'buy' action
+                // Example: contractCryptobot.methods.buy(buyAmount).send({ from: web3.eth.defaultAccount });
+                displayMessage(`Buy initiated for ${buyAmount} tokens.`, 'success');
+            }
+
+            // Function to set slippage percentage
+            function setSlippagePercentage() {
+                const slippagePercentage = document.getElementById('cryptoSlippagePercentage').value;
+                // Set slippage percentage logic
+                if (slippagePercentage > 0) {
+                    displayMessage(`Slippage percentage set to ${slippagePercentage}%.`, 'success');
+                } else {
+                    displayMessage('Slippage percentage must be higher than zero.', 'error');
+                }
+            }
+
+            // Function to set gas threshold
+            function setGasThreshold() {
+                const gasThreshold = document.getElementById('cryptoGasThreshold').value;
+                // Set gas threshold logic
+                if (gasThreshold > 0) {
+                    displayMessage(`Gas threshold set to ${gasThreshold}.`, 'success');
+                } else {
+                    displayMessage('Gas threshold must be higher than zero.', 'error');
+                }
+            }
+
+            // Function to display messages
+            function displayMessage(message, type) {
+                const messageContainer = document.getElementById('cryptoBotMessageContainer');
+                messageContainer.innerHTML = message;
+                messageContainer.className = 'message-container ' + (type === 'success' ? 'success-message' : 'error-message');
+            }
+        </script>
+    </div>
+
+    <!-- ... (your existing sections) ... -->
 </body>
+
 </html>
