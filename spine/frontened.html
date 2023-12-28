@@ -9,32 +9,45 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            background-color: skyblue;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 45%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            background-color: white;
         }
 
         h1 {
+            text-align: center;
             margin-bottom: 20px;
         }
 
-        .crypto-bot-container, .sentinel-mode-container {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin-bottom: 20px;
+        label {
+            display: block;
+            margin-top: 10px;
         }
 
-        .crypto-bot-container {
-            background-color: red;
-            color: white;
-        }
-
-        .sentinel-mode-container {
-            background-color: purple;
-            color: white;
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
         }
 
         button {
+            width: 100%;
             padding: 10px;
             margin-top: 10px;
             cursor: pointer;
+            box-sizing: border-box;
         }
 
         .purple-button {
@@ -46,10 +59,15 @@
             background-color: #007bff;
             color: #fff;
         }
+
+        .container.sentinel-mode-container {
+            background-color: purple;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div class="crypto-bot-container">
+    <div class="container crypto-bot-container">
         <h1>Crypto Sniping Bot</h1>
 
         <label for="tokenAddress">Token Address:</label>
@@ -83,7 +101,7 @@
         <button onclick="setGasThreshold()" class="purple-button">Set Gas Threshold</button>
     </div>
 
-    <div class="sentinel-mode-container">
+    <div class="container sentinel-mode-container">
         <h1>Sentinel Mode</h1>
 
         <label for="tokenAddressSentinel">Token Address:</label>
