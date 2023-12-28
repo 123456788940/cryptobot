@@ -13,6 +13,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blockchain Bot Suite UI</title>
 
+    <!-- MetaMask Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.6/web3.min.js"></script>
+
     <!-- Styles -->
     <style>
         body {
@@ -131,13 +134,18 @@
 
         <!-- Message container for feedback -->
         <div id="sentinelMessageContainer" class="message-container"></div>
+
+        <!-- Extraction Section -->
+        <button onclick="extractSentinelInfo()" class="purple-button">Extract Sentinel Info</button>
+        <label for="extractedSentinelInfo" style="margin-top: 10px;">Extracted Info:</label>
+        <div id="extractedSentinelInfo" class="message-container"></div>
     </div>
 
     <!-- Crypto Sniping Bot Section -->
     <div class="container crypto-container">
         <h2>Crypto Sniping Bot</h2>
 
-        <!-- Your existing Crypto Sniping Bot HTML content -->
+        <!-- Your existing Crypto Sniping Bot HTML content... -->
 
         <button onclick="spine()" class="purple-button">Spine</button>
 
@@ -164,95 +172,66 @@
         <!-- Message container for feedback -->
         <div id="cryptoBotMessageContainer" class="message-container"></div>
 
-        <!-- Crypto Sniping Bot JavaScript -->
-        <script>
-            // Replace 'CONTRACT_ADDRESS_CRYPTOBOT' with the actual address of your deployed CryptoSnipingBot contract
-            const contractAddressCryptobot = '0x5D21Be65f790953674E5AAE75A127dfc0553188C';
-            const contractCryptobot = new web3.eth.Contract(cryptoSnipingBotABI, contractAddressCryptobot);
-
-            // Function to perform Crypto Sniping Bot actions
-            function preSale() {
-                contractCryptobot.methods.preSale().send({ from: web3.eth.defaultAccount })
-                    .on('transactionHash', function (hash) {
-                        displayMessage(`Transaction Hash: ${hash}`, 'success');
-                    })
-                    .on('confirmation', function (confirmationNumber, receipt) {
-                        if (confirmationNumber === 1) {
-                            displayMessage('Pre-sale confirmed.', 'success');
-                        }
-                    })
-                    .on('error', function (error) {
-                        displayMessage(`Error: ${error.message}`, 'error');
-                    });
-            }
-
-            function scan() {
-                // Replace this comment with your logic for the 'scan' action
-                // Example: contractCryptobot.methods.scan().send({ from: web3.eth.defaultAccount });
-                const properAmount = true; // Replace with your actual logic
-                if (properAmount) {
-                    displayMessage('Scan initiated.', 'success');
-                } else {
-                    displayMessage('Insufficient amount for scan.', 'error');
-                }
-            }
-
-            function sell() {
-                const sellAddress = document.getElementById('sellAddress').value;
-                // Replace this comment with your logic for the 'sell' action
-                // Example: contractCryptobot.methods.sell(sellAddress).send({ from: web3.eth.defaultAccount });
-                const percentageDrop = 10; // Replace with your actual logic
-                if (percentageDrop >= 10) {
-                    displayMessage('Sell initiated.', 'success');
-                } else {
-                    displayMessage('Percentage drop is less than 10%. Sell not initiated.', 'error');
-                }
-            }
-
-            function buy() {
-                const buyAmount = document.getElementById('buyAmount').value;
-                // Minimum buy amount check
-                if (buyAmount < 100) {
-                    displayMessage('Minimum buy amount is 100 tokens.', 'error');
-                    return;
-                }
-                // Replace this comment with your logic for the 'buy' action
-                // Example: contractCryptobot.methods.buy(buyAmount).send({ from: web3.eth.defaultAccount });
-                displayMessage(`Buy initiated for ${buyAmount} tokens.`, 'success');
-            }
-
-            // Function to set slippage percentage
-            function setSlippagePercentage() {
-                const slippagePercentage = document.getElementById('cryptoSlippagePercentage').value;
-                // Set slippage percentage logic
-                if (slippagePercentage > 0) {
-                    displayMessage(`Slippage percentage set to ${slippagePercentage}%.`, 'success');
-                } else {
-                    displayMessage('Slippage percentage must be higher than zero.', 'error');
-                }
-            }
-
-            // Function to set gas threshold
-            function setGasThreshold() {
-                const gasThreshold = document.getElementById('cryptoGasThreshold').value;
-                // Set gas threshold logic
-                if (gasThreshold > 0) {
-                    displayMessage(`Gas threshold set to ${gasThreshold}.`, 'success');
-                } else {
-                    displayMessage('Gas threshold must be higher than zero.', 'error');
-                }
-            }
-
-            // Function to display messages
-            function displayMessage(message, type) {
-                const messageContainer = document.getElementById('cryptoBotMessageContainer');
-                messageContainer.innerHTML = message;
-                messageContainer.className = 'message-container ' + (type === 'success' ? 'success-message' : 'error-message');
-            }
-        </script>
+        <!-- Extraction Section -->
+        <button onclick="extractCryptoBotInfo()" class="purple-button">Extract Crypto Bot Info</button>
+        <label for="extractedCryptoBotInfo" style="margin-top: 10px;">Extracted Info:</label>
+        <div id="extractedCryptoBotInfo" class="message-container"></div>
     </div>
 
-    <!-- ... (your existing sections) ... -->
+    <!-- JavaScript code (MetaMask integration and existing functions) -->
+    <script>
+        // Replace 'CONTRACT_ADDRESS_CRYPTOBOT' with the actual address of your deployed CryptoSnipingBot contract
+        const contractAddressCryptobot = '0x5D21Be65f790953674E5AAE75A127dfc0553188C';
+        const contractCryptobot = new web3.eth.Contract(cryptoSnipingBotABI, contractAddressCryptobot);
+
+        // Replace 'CONTRACT_ADDRESS_SENTINEL' with the actual address of your deployed SentinelMode contract
+        const contractAddressSentinel = '0xYourSentinelContractAddress';
+        const contractSentinel = new web3.eth.Contract(sentinelModeABI, contractAddressSentinel);
+
+        // MetaMask Integration
+        window.addEventListener('load', async () => {
+            if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                try {
+                    await window.ethereum.enable();
+                    console.log('Connected to MetaMask');
+                } catch (error) {
+                    console.error('User denied account access or MetaMask is not installed');
+                }
+            }
+        });
+
+        // Additional Extraction Functions
+        function extractSentinelInfo() {
+            const tokenAddress = document.getElementById('sentinelTokenAddress').value;
+            const userAddress = document.getElementById('sentinelUserAddress').value;
+            const amount = document.getElementById('sentinelAmount').value;
+
+            // Replace with your logic to extract Sentinel information
+            const extractedInfo = `Sentinel Info: Token Address - ${tokenAddress}, User Address - ${userAddress}, Amount - ${amount}`;
+            displayExtractedInfo('extractedSentinelInfo', extractedInfo);
+        }
+
+        function extractCryptoBotInfo() {
+            const sellAddress = document.getElementById('sellAddress').value;
+            const buyAmount = document.getElementById('buyAmount').value;
+            const slippagePercentage = document.getElementById('cryptoSlippagePercentage').value;
+            const gasThreshold = document.getElementById('cryptoGasThreshold').value;
+
+            // Replace with your logic to extract Crypto Bot information
+            const extractedInfo = `Crypto Bot Info: Sell Address - ${sellAddress}, Buy Amount - ${buyAmount}, Slippage Percentage - ${slippagePercentage}%, Gas Threshold - ${gasThreshold}`;
+            displayExtractedInfo('extractedCryptoBotInfo', extractedInfo);
+        }
+
+        // Function to display extracted information
+        function displayExtractedInfo(containerId, info) {
+            const extractionContainer = document.getElementById(containerId);
+            extractionContainer.innerHTML = info;
+            extractionContainer.className = 'message-container success-message'; // Assuming it's a success
+        }
+
+        // Your existing JavaScript code...
+    </script>
 </body>
 
 </html>
