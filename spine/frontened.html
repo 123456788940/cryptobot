@@ -1,237 +1,241 @@
-<!DOCTYPE html>
-<html lang="en">
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-<head>
-    <!-- Include ABIs -->
-    <script src="path/to/sentinelModeABI.js"></script>
-    <script src="path/to/cryptoSnipingBotABI.js"></script>
-    <script src="path/to/multiwalletIntegrationABI.js"></script>
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+`;
 
-    <!-- Meta Tags -->
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain Bot Suite UI</title>
+const Title = styled.h1`
+  text-align: center;
+  color: #333;
+`;
 
-    <!-- MetaMask Script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.6/web3.min.js"></script>
+const Button = styled.button`
+  background-color: #4e8bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
 
-    <!-- Styles -->
-    <style>
-        body {
-            background-color: #f0f0f0;
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+  &:hover {
+    background-color: #4074e6;
+  }
+`;
 
-        h1 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
+const Select = styled.select`
+  padding: 8px;
+  margin-bottom: 20px;
+`;
 
-        button {
-            padding: 12px;
-            margin-top: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
+const FormContainer = styled.div`
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+`;
 
-        .container {
-            width: 70%;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+const Label = styled.label`
+  display: block;
+  margin-bottom: 8px;
+`;
 
-        .crypto-container {
-            background-color: #7a7aff;
-            color: #fff;
-        }
+const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
 
-        .sentinel-container {
-            background-color: #8B4513; /* Brown color */
-            color: #fff;
-        }
+const MessageContainer = styled.div`
+  margin-top: 10px;
+  color: #4e8bff;
+`;
 
-        .multiwallet-container {
-            background-color: #ff5555;
-            color: #fff;
-        }
+const App = () => {
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const [wallets, setWallets] = useState([]);
+  const [sentinelInfo, setSentinelInfo] = useState({
+    tokenAddress: '',
+    userAddress: '',
+    amount: 100,
+    risksDetected: '',
+    extractedInfo: '',
+  });
 
-        .red-container {
-            background-color: #ff5555;
-            color: #fff;
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+  const [cryptoBotInfo, setCryptoBotInfo] = useState({
+    sellAddress: '',
+    buyAmount: '',
+    slippagePercentage: '',
+    gasThreshold: '',
+    extractedInfo: '',
+  });
 
-        .blue-button {
-            background-color: #007bff;
-            color: #fff;
-        }
+  const updateWallets = () => {
+    // Replace this with your logic for updating wallets
+    console.log('Updating wallets');
+  };
 
-        .purple-button {
-            background-color: #7a7aff;
-            color: #fff;
-        }
+  const switchWallet = (newAddress) => {
+    setSelectedAddress(newAddress);
+  };
 
-        .red-text {
-            color: #ff5555;
-        }
+  const connectWallets = async () => {
+    // Replace this with your logic for connecting to Web3
+    if (window.ethereum) {
+      window.web3 = new window.Web3(window.ethereum);
+      try {
+        await window.ethereum.enable();
+        console.log('Connected to MetaMask');
+        // Additional logic after connecting
+        updateWallets();
+      } catch (error) {
+        console.error('User denied account access or MetaMask is not installed');
+      }
+    } else {
+      console.error('MetaMask is not installed');
+    }
+  };
 
-        .message-container {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
+  const detectRisks = () => {
+    // Add logic to detect risks in Sentinel Mode
+    const risksDetected = 'Risks detected in Sentinel Mode'; // Replace with your logic
+    setSentinelInfo((prevInfo) => ({ ...prevInfo, risksDetected }));
+  };
 
-        .error-message {
-            background-color: #ff5555;
-            color: #fff;
-        }
+  const extractSentinelInfo = () => {
+    const { tokenAddress, userAddress, amount } = sentinelInfo;
+    const extractedInfo = `Sentinel Info: Token Address - ${tokenAddress}, User Address - ${userAddress}, Amount - ${amount}`;
+    setSentinelInfo((prevInfo) => ({ ...prevInfo, extractedInfo }));
+  };
 
-        .success-message {
-            background-color: #7a7aff;
-            color: #fff;
-        }
-    </style>
-</head>
+  const spine = () => {
+    // Add logic for the Crypto Sniping Bot
+    // This is just a placeholder, replace it with your actual logic
+    console.log('Spine button clicked');
+  };
 
-<body>
-    <h1>Blockchain Bot Suite UI</h1>
+  const sell = () => {
+    // Add logic for selling in Crypto Sniping Bot
+    // This is just a placeholder, replace it with your actual logic
+    console.log('Sell button clicked');
+  };
 
-    <!-- Connect to MetaMask button -->
-    <button onclick="connectMetaMask()" class="blue-button">Connect to MetaMask</button>
+  const buy = () => {
+    // Add logic for buying in Crypto Sniping Bot
+    // This is just a placeholder, replace it with your actual logic
+    console.log('Buy button clicked');
+  };
 
-    <!-- Sentinel Mode Section -->
-    <div class="container sentinel-container">
+  const setSlippagePercentage = () => {
+    // Add logic for setting slippage percentage in Crypto Sniping Bot
+    // This is just a placeholder, replace it with your actual logic
+    console.log('Set Slippage Percentage button clicked');
+  };
+
+  const setGasThreshold = () => {
+    // Add logic for setting gas threshold in Crypto Sniping Bot
+    // This is just a placeholder, replace it with your actual logic
+    console.log('Set Gas Threshold button clicked');
+  };
+
+  const extractCryptoBotInfo = () => {
+    const { sellAddress, buyAmount, slippagePercentage, gasThreshold } = cryptoBotInfo;
+    const extractedInfo = `Crypto Bot Info: Sell Address - ${sellAddress}, Buy Amount - ${buyAmount}, Slippage Percentage - ${slippagePercentage}%, Gas Threshold - ${gasThreshold}`;
+    setCryptoBotInfo((prevInfo) => ({ ...prevInfo, extractedInfo }));
+  };
+
+  return (
+    <Container>
+      <Title>Blockchain Bot Suite UI</Title>
+
+      <Button onClick={connectWallets}>Connect to Wallet</Button>
+
+      <Select id="walletDropdown" onChange={(e) => switchWallet(e.target.value)}>
+        {wallets.map((wallet) => (
+          <option key={wallet.get('ethAddress')} value={wallet.get('ethAddress')}>
+            {wallet.get('ethAddress')}
+          </option>
+        ))}
+      </Select>
+
+      <FormContainer>
         <h2>Sentinel Mode</h2>
+        <Label htmlFor="sentinelTokenAddress">Token Address:</Label>
+        <Input
+          type="text"
+          id="sentinelTokenAddress"
+          placeholder="Enter Token Address"
+          onChange={(e) => setSentinelInfo((prevInfo) => ({ ...prevInfo, tokenAddress: e.target.value }))}
+        />
+        <Label htmlFor="sentinelUserAddress">User Address:</Label>
+        <Input
+          type="text"
+          id="sentinelUserAddress"
+          placeholder="Enter User Address"
+          onChange={(e) => setSentinelInfo((prevInfo) => ({ ...prevInfo, userAddress: e.target.value }))}
+        />
+        <Label htmlFor="sentinelAmount">Amount:</Label>
+        <Input
+          type="number"
+          id="sentinelAmount"
+          placeholder="Enter Amount"
+          onChange={(e) => setSentinelInfo((prevInfo) => ({ ...prevInfo, amount: e.target.value }))}
+        />
+        <Button onClick={detectRisks}>Detect Risks</Button>
+        <MessageContainer>{sentinelInfo.risksDetected}</MessageContainer>
+        <Button onClick={extractSentinelInfo}>Extract Sentinel Info</Button>
+        <MessageContainer>{sentinelInfo.extractedInfo}</MessageContainer>
+      </FormContainer>
 
-        <label for="sentinelTokenAddress">Token Address:</label>
-        <input type="text" id="sentinelTokenAddress" placeholder="Enter Token Address">
-
-        <label for="sentinelUserAddress">User Address:</label>
-        <input type="text" id="sentinelUserAddress" placeholder="Enter User Address">
-
-        <label for="sentinelAmount">Amount:</label>
-        <input type="number" id="sentinelAmount" placeholder="Enter Amount">
-
-        <button onclick="detectRisks()" class="purple-button">Detect Risks</button>
-
-        <!-- Message container for feedback -->
-        <div id="sentinelMessageContainer" class="message-container"></div>
-
-        <!-- Extraction Section -->
-        <button onclick="extractSentinelInfo()" class="purple-button">Extract Sentinel Info</button>
-        <label for="extractedSentinelInfo" style="margin-top: 10px;">Extracted Info:</label>
-        <div id="extractedSentinelInfo" class="message-container"></div>
-    </div>
-
-    <!-- Crypto Sniping Bot Section -->
-    <div class="container crypto-container">
+      <FormContainer>
         <h2>Crypto Sniping Bot</h2>
+        <Button onClick={spine}>Spine</Button>
+        <Label htmlFor="sellAddress">Sell Address:</Label>
+        <Input
+          type="text"
+          id="sellAddress"
+          placeholder="Enter Sell Address"
+          onChange={(e) => setCryptoBotInfo((prevInfo) => ({ ...prevInfo, sellAddress: e.target.value }))}
+        />
+        <Button onClick={sell}>Sell</Button>
+        <Label htmlFor="buyAmount">Buy Amount:</Label>
+        <Input
+          type="number"
+          id="buyAmount"
+          placeholder="Enter Buy Amount"
+          onChange={(e) => setCryptoBotInfo((prevInfo) => ({ ...prevInfo, buyAmount: e.target.value }))}
+        />
+        <Button onClick={buy}>Buy</Button>
+        <Label htmlFor="cryptoSlippagePercentage">Slippage Percentage:</Label>
+        <Input
+          type="number"
+          id="cryptoSlippagePercentage"
+          placeholder="Enter Slippage Percentage"
+          onChange={(e) =>
+            setCryptoBotInfo((prevInfo) => ({ ...prevInfo, slippagePercentage: e.target.value }))
+          }
+        />
+        <Button onClick={setSlippagePercentage}>Set Slippage Percentage</Button>
+        <Label htmlFor="cryptoGasThreshold">Gas Threshold:</Label>
+        <Input
+          type="number"
+          id="cryptoGasThreshold"
+          placeholder="Enter Gas Threshold"
+          onChange={(e) =>
+            setCryptoBotInfo((prevInfo) => ({ ...prevInfo, gasThreshold: e.target.value }))
+          }
+        />
+        <Button onClick={setGasThreshold}>Set Gas Threshold</Button>
+        <MessageContainer>{cryptoBotInfo.extractedInfo}</MessageContainer>
+        <Button onClick={extractCryptoBotInfo}>Extract Crypto Bot Info</Button>
+      </FormContainer>
+    </Container>
+  );
+};
 
-        <!-- Your existing Crypto Sniping Bot HTML content... -->
-
-        <button onclick="spine()" class="purple-button">Spine</button>
-
-        <label for="sellAddress">Sell Address:</label>
-        <input type="text" id="sellAddress" placeholder="Enter Sell Address">
-
-        <button onclick="sell()" class="purple-button">Sell</button>
-
-        <label for="buyAmount">Buy Amount:</label>
-        <input type="number" id="buyAmount" placeholder="Enter Buy Amount">
-
-        <button onclick="buy()" class="purple-button">Buy</button>
-
-        <label for="cryptoSlippagePercentage">Slippage Percentage:</label>
-        <input type="number" id="cryptoSlippagePercentage" placeholder="Enter Slippage Percentage">
-
-        <button onclick="setSlippagePercentage()" class="purple-button">Set Slippage Percentage</button>
-
-        <label for="cryptoGasThreshold">Gas Threshold:</label>
-        <input type="number" id="cryptoGasThreshold" placeholder="Enter Gas Threshold">
-
-        <button onclick="setGasThreshold()" class="purple-button">Set Gas Threshold</button>
-
-        <!-- Message container for feedback -->
-        <div id="cryptoBotMessageContainer" class="message-container"></div>
-
-        <!-- Extraction Section -->
-        <button onclick="extractCryptoBotInfo()" class="purple-button">Extract Crypto Bot Info</button>
-        <label for="extractedCryptoBotInfo" style="margin-top: 10px;">Extracted Info:</label>
-        <div id="extractedCryptoBotInfo" class="message-container"></div>
-    </div>
-
-    <!-- JavaScript code (MetaMask integration and existing functions) -->
-    <script>
-        // Replace 'CONTRACT_ADDRESS_CRYPTOBOT' with the actual address of your deployed CryptoSnipingBot contract
-        const contractAddressCryptobot = '0x5D21Be65f790953674E5AAE75A127dfc0553188C';
-        const contractCryptobot = new web3.eth.Contract(cryptoSnipingBotABI, contractAddressCryptobot);
-
-        // Replace 'CONTRACT_ADDRESS_SENTINEL' with the actual address of your deployed SentinelMode contract
-        const contractAddressSentinel = '0xYourSentinelContractAddress';
-        const contractSentinel = new web3.eth.Contract(sentinelModeABI, contractAddressSentinel);
-
-        // MetaMask Integration
-        window.addEventListener('load', async () => {
-            if (window.ethereum) {
-                window.web3 = new Web3(window.ethereum);
-                try {
-                    await window.ethereum.enable();
-                    console.log('Connected to MetaMask');
-                } catch (error) {
-                    console.error('User denied account access or MetaMask is not installed');
-                }
-            }
-        });
-
-        // Additional Extraction Functions
-        function extractSentinelInfo() {
-            const tokenAddress = document.getElementById('sentinelTokenAddress').value;
-            const userAddress = document.getElementById('sentinelUserAddress').value;
-            const amount = document.getElementById('sentinelAmount').value;
-
-            // Replace with your logic to extract Sentinel information
-            const extractedInfo = `Sentinel Info: Token Address - ${tokenAddress}, User Address - ${userAddress}, Amount - ${amount}`;
-            displayExtractedInfo('extractedSentinelInfo', extractedInfo);
-        }
-
-        function extractCryptoBotInfo() {
-            const sellAddress = document.getElementById('sellAddress').value;
-            const buyAmount = document.getElementById('buyAmount').value;
-            const slippagePercentage = document.getElementById('cryptoSlippagePercentage').value;
-            const gasThreshold = document.getElementById('cryptoGasThreshold').value;
-
-            // Replace with your logic to extract Crypto Bot information
-            const extractedInfo = `Crypto Bot Info: Sell Address - ${sellAddress}, Buy Amount - ${buyAmount}, Slippage Percentage - ${slippagePercentage}%, Gas Threshold - ${gasThreshold}`;
-            displayExtractedInfo('extractedCryptoBotInfo', extractedInfo);
-        }
-
-        // Function to display extracted information
-        function displayExtractedInfo(containerId, info) {
-            const extractionContainer = document.getElementById(containerId);
-            extractionContainer.innerHTML = info;
-            extractionContainer.className = 'message-container success-message'; // Assuming it's a success
-        }
-
-        // Your existing JavaScript code...
-    </script>
-</body>
-
-</html>
+export default App;
