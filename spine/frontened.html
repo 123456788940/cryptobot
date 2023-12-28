@@ -1,58 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Include ABIs -->
+    <script src="path/to/sentinelModeABI.js"></script>
+    <script src="path/to/cryptoSnipingBotABI.js"></script>
+    <script src="path/to/multiwalletIntegrationABI.js"></script>
+
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Sniping Bot & Sentinel Mode UI</title>
+    <title>Blockchain Bot Suite UI</title>
+
+    <!-- Styles -->
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            background-color: skyblue;
-            min-height: 100vh;
+            background-color: #f0f0f0;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-        }
-
-        .container {
-            border: 1px solid #ccc;
-            padding: 20px;
-            width: 45%;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            background-color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
-            text-align: center;
+            color: #007bff;
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            margin-top: 5px;
-        }
-
         button {
-            width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 10px;
             cursor: pointer;
-            box-sizing: border-box;
+            border: none;
+            border-radius: 5px;
         }
 
-        .purple-button {
-            background-color: purple;
-            color: white;
+        .container {
+            width: 70%;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sentinel-container {
+            background-color: #7a7aff;
+            color: #fff;
+        }
+
+        .crypto-container {
+            background-color: #33cc33;
+            color: #fff;
+        }
+
+        .multiwallet-container {
+            background-color: #ff5555;
+            color: #fff;
+        }
+
+        .red-container {
+            background-color: #ff5555;
+            color: #fff;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .blue-button {
@@ -60,21 +79,48 @@
             color: #fff;
         }
 
-        .container.sentinel-mode-container {
-            background-color: purple;
-            color: white;
+        .purple-button {
+            background-color: #7a7aff;
+            color: #fff;
+        }
+
+        .green-button {
+            background-color: #33cc33;
+            color: #fff;
+        }
+
+        .red-text {
+            color: #ff5555;
         }
     </style>
 </head>
 <body>
-    <div class="container crypto-bot-container">
-        <h1>Crypto Sniping Bot</h1>
+    <h1>Blockchain Bot Suite UI</h1>
 
-        <label for="tokenAddress">Token Address:</label>
-        <input type="text" id="tokenAddress" placeholder="Enter Token Address">
+    <!-- Connect to MetaMask button -->
+    <button onclick="connectMetaMask()" class="blue-button">Connect to MetaMask</button>
 
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" placeholder="Enter Amount">
+    <!-- Sentinel Mode Section -->
+    <div class="container sentinel-container">
+        <h2>Sentinel Mode</h2>
+
+        <label for="sentinelTokenAddress">Token Address:</label>
+        <input type="text" id="sentinelTokenAddress" placeholder="Enter Token Address">
+
+        <label for="sentinelUserAddress">User Address:</label>
+        <input type="text" id="sentinelUserAddress" placeholder="Enter User Address">
+
+        <label for="sentinelAmount">Amount:</label>
+        <input type="number" id="sentinelAmount" placeholder="Enter Amount">
+
+        <button onclick="detectRisks()" class="purple-button">Detect Risks</button>
+    </div>
+
+    <!-- Crypto Sniping Bot Section -->
+    <div class="container crypto-container">
+        <h2>Crypto Sniping Bot</h2>
+
+        <!-- Your existing Crypto Sniping Bot HTML content -->
 
         <button onclick="spine()" class="purple-button">Spine</button>
         <button onclick="preSale()" class="purple-button">Pre Sale</button>
@@ -90,35 +136,106 @@
 
         <button onclick="buy()" class="purple-button">Buy</button>
 
-        <label for="slippagePercentage">Slippage Percentage:</label>
-        <input type="number" id="slippagePercentage" placeholder="Enter Slippage Percentage">
+        <label for="cryptoSlippagePercentage">Slippage Percentage:</label>
+        <input type="number" id="cryptoSlippagePercentage" placeholder="Enter Slippage Percentage">
 
         <button onclick="setSlippagePercentage()" class="purple-button">Set Slippage Percentage</button>
 
-        <label for="gasThreshold">Gas Threshold:</label>
-        <input type="number" id="gasThreshold" placeholder="Enter Gas Threshold">
+        <label for="cryptoGasThreshold">Gas Threshold:</label>
+        <input type="number" id="cryptoGasThreshold" placeholder="Enter Gas Threshold">
 
         <button onclick="setGasThreshold()" class="purple-button">Set Gas Threshold</button>
+
+        <!-- Crypto Sniping Bot JavaScript -->
+        <script>
+            // Replace 'CONTRACT_ADDRESS_CRYPTOBOT' with the actual address of your deployed CryptoSnipingBot contract
+            const contractAddressCryptobot = 'CONTRACT_ADDRESS_CRYPTOBOT';
+            const contractCryptobot = new web3.eth.Contract(cryptoSnipingBotABI, contractAddressCryptobot);
+
+            // Your existing Crypto Sniping Bot JavaScript code here
+        </script>
     </div>
 
-    <div class="container sentinel-mode-container">
-        <h1>Sentinel Mode</h1>
+    <!-- Multiwallet Integration Section -->
+    <div class="container multiwallet-container">
+        <h2>Multiwallet Integration</h2>
 
-        <label for="tokenAddressSentinel">Token Address:</label>
-        <input type="text" id="tokenAddressSentinel" placeholder="Enter Token Address">
+        <label for="multiwalletUserAddress">User Address:</label>
+        <input type="text" id="multiwalletUserAddress" placeholder="Enter User Address">
 
-        <label for="userAddressSentinel">User Address:</label>
-        <input type="text" id="userAddressSentinel" placeholder="Enter User Address">
+        <label for="multiwalletWalletAddress">Wallet Address:</label>
+        <input type="text" id="multiwalletWalletAddress" placeholder="Enter Wallet Address">
 
-        <label for="amountSentinel">Amount:</label>
-        <input type="number" id="amountSentinel" placeholder="Enter Amount">
+        <button onclick="connectWallet()" class="blue-button">Connect Wallet</button>
+        <button onclick="disconnectWallet()" class="blue-button">Disconnect Wallet</button>
 
-        <button onclick="detectRisks()" class="purple-button">Detect Risks</button>
+        <button onclick="getConnectedWallets()" class="blue-button">Get Connected Wallets</button>
+
+        <!-- Multiwallet Integration JavaScript -->
+        <script>
+            // Replace 'CONTRACT_ADDRESS_MULTIWALLET' with the actual address of your deployed MultiwalletIntegration contract
+            const contractAddressMultiwallet = 'CONTRACT_ADDRESS_MULTIWALLET';
+            const contractMultiwallet = new web3.eth.Contract(multiwalletIntegrationABI, contractAddressMultiwallet);
+
+            // Function to connect a wallet
+            async function connectWallet() {
+                const multiwalletUserAddress = document.getElementById('multiwalletUserAddress').value;
+                const multiwalletWalletAddress = document.getElementById('multiwalletWalletAddress').value;
+
+                // Call the 'connectWallet' function of the MultiwalletIntegration contract with input parameters
+                await contractMultiwallet.methods.connectWallet(multiwalletUserAddress, multiwalletWalletAddress).send({ from: web3.eth.defaultAccount });
+
+                alert('Wallet connected successfully!');
+            }
+
+            // Function to disconnect a wallet
+            async function disconnectWallet() {
+                const multiwalletUserAddress = document.getElementById('multiwalletUserAddress').value;
+                const multiwalletWalletAddress = document.getElementById('multiwalletWalletAddress').value;
+
+                // Call the 'disconnectWallet' function of the MultiwalletIntegration contract with input parameters
+                await contractMultiwallet.methods.disconnectWallet(multiwalletUserAddress, multiwalletWalletAddress).send({ from: web3.eth.defaultAccount });
+
+                alert('Wallet disconnected successfully!');
+            }
+
+            // Function to get connected wallets
+            async function getConnectedWallets() {
+                const multiwalletUserAddress = document.getElementById('multiwalletUserAddress').value;
+
+                // Call the 'getConnectedWallets' function of the MultiwalletIntegration contract
+                const connectedWallets = await contractMultiwallet.methods.getConnectedWallets(multiwalletUserAddress).call();
+
+                alert('Connected Wallets: ' + connectedWallets.join(', '));
+            }
+        </script>
     </div>
 
+    <!-- Red Events Section -->
+    <div class="container red-container">
+        <h2 class="red-text">Red Events Section</h2>
+
+        <!-- Display your red events here based on the actions performed in your smart contracts -->
+    </div>
+
+    <!-- MetaMask Connection JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
     <script>
-        // Your existing JavaScript code here
+        // Function to connect to MetaMask
+        async function connectMetaMask() {
+            if (window.ethereum) {
+                try {
+                    // Request account access
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    alert('MetaMask connected successfully!');
+                } catch (error) {
+                    console.error('Error connecting to MetaMask:', error.message);
+                    alert('Error connecting to MetaMask');
+                }
+            } else {
+                alert('MetaMask not detected. Please install MetaMask.');
+            }
+        }
     </script>
 </body>
 </html>
