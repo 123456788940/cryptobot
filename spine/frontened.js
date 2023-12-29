@@ -171,32 +171,26 @@ const App = () => {
   };
 
   const spine = () => {
-    // Add logic for the Crypto Sniping Bot
-    // This is just a placeholder, replace it with your actual logic
     console.log('Spine button clicked');
   };
 
   const sell = () => {
     // Add logic for selling in Crypto Sniping Bot
-    // This is just a placeholder, replace it with your actual logic
     console.log('Sell button clicked');
   };
 
   const buy = () => {
     // Add logic for buying in Crypto Sniping Bot
-    // This is just a placeholder, replace it with your actual logic
     console.log('Buy button clicked');
   };
 
   const setSlippagePercentage = () => {
     // Add logic for setting slippage percentage in Crypto Sniping Bot
-    // This is just a placeholder, replace it with your actual logic
     console.log('Set Slippage Percentage button clicked');
   };
 
   const setGasThreshold = () => {
     // Add logic for setting gas threshold in Crypto Sniping Bot
-    // This is just a placeholder, replace it with your actual logic
     console.log('Set Gas Threshold button clicked');
   };
 
