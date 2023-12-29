@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import Web3 from 'web3'; // Import web3 library
 
 const Container = styled.div`
   display: flex;
-  background-color: #2c3e50; /* Dark background color */
-  color: #ecf0f1; /* Light text color */
+  background-color: #2c3e50;
+  color: #ecf0f1;
   font-family: 'Arial', sans-serif;
   height: 100vh;
 `;
@@ -12,7 +13,7 @@ const Container = styled.div`
 const Sidebar = styled.div`
   width: 250px;
   padding: 20px;
-  background-color: #34495e; /* Sidebar background color */
+  background-color: #34495e;
 `;
 
 const MainContent = styled.div`
@@ -22,12 +23,12 @@ const MainContent = styled.div`
 
 const Title = styled.h1`
   text-align: center;
-  color: #3498db; /* Title color */
+  color: #3498db;
 `;
 
 const Button = styled.button`
-  background-color: #3498db; /* Button color */
-  color: #ecf0f1; /* Button text color */
+  background-color: #3498db;
+  color: #ecf0f1;
   padding: 10px 15px;
   border: none;
   cursor: pointer;
@@ -36,7 +37,7 @@ const Button = styled.button`
   font-size: 14px;
 
   &:hover {
-    background-color: #2980b9; /* Button color on hover */
+    background-color: #2980b9;
   }
 `;
 
@@ -47,7 +48,7 @@ const Select = styled.select`
 `;
 
 const FormContainer = styled.div`
-  background-color: #ecf0f1; /* Form container background color */
+  background-color: #ecf0f1;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -56,20 +57,20 @@ const FormContainer = styled.div`
 const Label = styled.label`
   display: block;
   margin-bottom: 8px;
-  color: #3498db; /* Label color */
+  color: #3498db;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #bdc3c7; /* Input border color */
+  border: 1px solid #bdc3c7;
   border-radius: 4px;
 `;
 
 const MessageContainer = styled.div`
   margin-top: 10px;
-  color: #3498db; /* Message color */
+  color: #3498db;
 `;
 
 const List = styled.ul`
@@ -85,8 +86,8 @@ const ListItem = styled.li`
 `;
 
 const RemoveButton = styled.button`
-  background-color: #e74c3c; /* Remove button color */
-  color: #ecf0f1; /* Remove button text color */
+  background-color: #e74c3c;
+  color: #ecf0f1;
   padding: 5px 10px;
   border: none;
   cursor: pointer;
@@ -94,7 +95,7 @@ const RemoveButton = styled.button`
   font-size: 12px;
 
   &:hover {
-    background-color: #c0392b; /* Remove button color on hover */
+    background-color: #c0392b;
   }
 `;
 
@@ -104,7 +105,7 @@ const App = () => {
   const [sentinelInfo, setSentinelInfo] = useState({
     tokenAddress: '',
     userAddress: '',
-    amount: 100,
+    amount: '',
     risksDetected: '',
     extractedInfo: '',
   });
@@ -121,7 +122,6 @@ const App = () => {
   const [confirmedWallets, setConfirmedWallets] = useState([]);
 
   const updateWallets = () => {
-    // Replace this with your logic for updating wallets
     console.log('Updating wallets');
   };
 
@@ -142,13 +142,19 @@ const App = () => {
   };
 
   const connectWallets = async () => {
-    // Replace this with your logic for connecting to Web3
     if (window.ethereum) {
-      window.web3 = new window.Web3(window.ethereum);
+      // Initialize web3
+      const web3 = new Web3(window.ethereum);
+
       try {
+        // Request account access if needed
         await window.ethereum.enable();
         console.log('Connected to MetaMask');
-        // Additional logic after connecting
+
+        // Now you can use 'web3' for Ethereum interactions
+        const accounts = await web3.eth.getAccounts();
+        console.log('Connected account:', accounts[0]);
+
         updateWallets();
       } catch (error) {
         console.error('User denied account access or MetaMask is not installed');
@@ -159,8 +165,7 @@ const App = () => {
   };
 
   const detectRisks = () => {
-    // Add logic to detect risks in Sentinel Mode
-    const risksDetected = 'Risks detected in Sentinel Mode'; // Replace with your logic
+    const risksDetected = 'Risks detected in Sentinel Mode';
     setSentinelInfo((prevInfo) => ({ ...prevInfo, risksDetected }));
   };
 
@@ -170,27 +175,45 @@ const App = () => {
     setSentinelInfo((prevInfo) => ({ ...prevInfo, extractedInfo }));
   };
 
+  const sendEth = async (amount, toAddress) => {
+    const accounts = await web3.eth.getAccounts();
+    const fromAddress = accounts[0];
+
+    try {
+      await web3.eth.sendTransaction({
+        from: fromAddress,
+        to: toAddress,
+        value: web3.utils.toWei(amount.toString(), 'ether'),
+      });
+
+      console.log('ETH sent successfully');
+    } catch (error) {
+      console.error('Error sending ETH:', error);
+    }
+  };
+
   const spine = () => {
-    console.log('Spine button clicked');
+    // Example: Send 0.1 ETH to '0x1234567890abcdef1234567890abcdef12345678'
+    sendEth(0.1, '0x1234567890abcdef1234567890abcdef12345678');
+  };
+
+  const presale = () => {
+    console.log('Presale button clicked');
   };
 
   const sell = () => {
-    // Add logic for selling in Crypto Sniping Bot
     console.log('Sell button clicked');
   };
 
   const buy = () => {
-    // Add logic for buying in Crypto Sniping Bot
     console.log('Buy button clicked');
   };
 
   const setSlippagePercentage = () => {
-    // Add logic for setting slippage percentage in Crypto Sniping Bot
     console.log('Set Slippage Percentage button clicked');
   };
 
   const setGasThreshold = () => {
-    // Add logic for setting gas threshold in Crypto Sniping Bot
     console.log('Set Gas Threshold button clicked');
   };
 
@@ -272,7 +295,28 @@ const App = () => {
 
         <FormContainer>
           <h2>Crypto Sniping Bot</h2>
-          <Button onClick={spine}>Spine</Button>
+          <Button onClick={spine}>Spine amount</Button>
+          <Label htmlFor="spinToken">Spin Token</Label>
+          <Input
+            type="number"
+            id="spinAmount"
+            placeholder="Enter Spin Amount"
+            onChange={(e) =>
+              setCryptoBotInfo((prevInfo) => ({ ...prevInfo, buyAmount: e.target.value }))
+            }
+          />
+          <Button onClick={presale}>🚀 Join Presale 🚀</Button>
+          <Label htmlFor="sendToken">Send Amount</Label>
+          <Input
+            type="number"
+            id="presaleAmount"
+            placeholder="Enter Amount"
+            onChange={(e) =>
+              setCryptoBotInfo((prevInfo) => ({ ...prevInfo, buyAmount: e.target.value }))
+            }
+          />
+
+          <Button onClick={sell}>Sell</Button>
           <Label htmlFor="sellAddress">Sell Address:</Label>
           <Input
             type="text"
@@ -282,7 +326,8 @@ const App = () => {
               setCryptoBotInfo((prevInfo) => ({ ...prevInfo, sellAddress: e.target.value }))
             }
           />
-          <Button onClick={sell}>Sell</Button>
+
+          <Button onClick={buy}>Buy</Button>
           <Label htmlFor="buyAmount">Buy Amount:</Label>
           <Input
             type="number"
@@ -292,7 +337,8 @@ const App = () => {
               setCryptoBotInfo((prevInfo) => ({ ...prevInfo, buyAmount: e.target.value }))
             }
           />
-          <Button onClick={buy}>Buy</Button>
+
+          <Button onClick={setSlippagePercentage}>Set Slippage Percentage</Button>
           <Label htmlFor="cryptoSlippagePercentage">Slippage Percentage:</Label>
           <Input
             type="number"
@@ -302,7 +348,8 @@ const App = () => {
               setCryptoBotInfo((prevInfo) => ({ ...prevInfo, slippagePercentage: e.target.value }))
             }
           />
-          <Button onClick={setSlippagePercentage}>Set Slippage Percentage</Button>
+
+          <Button onClick={setGasThreshold}>Set Gas Threshold</Button>
           <Label htmlFor="cryptoGasThreshold">Gas Threshold:</Label>
           <Input
             type="number"
@@ -312,7 +359,6 @@ const App = () => {
               setCryptoBotInfo((prevInfo) => ({ ...prevInfo, gasThreshold: e.target.value }))
             }
           />
-          <Button onClick={setGasThreshold}>Set Gas Threshold</Button>
           <MessageContainer>{cryptoBotInfo.extractedInfo}</MessageContainer>
           <Button onClick={extractCryptoBotInfo}>Extract Crypto Bot Info</Button>
         </FormContainer>
