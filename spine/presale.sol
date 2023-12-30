@@ -88,8 +88,8 @@ contract cryptoSnipingBot {
       }
 
       function sell(address player) external payable  onlyOwner{
-        require(percentageDropToSell== 10, "at least the percentage should be 10");
-             require(!actions[msg.sender].sell, "selling done");  
+require(percentageDropToSell.mul(amount).div(100) == amount.mul(10).div(100), "at least the percentage should be 10");
+ require(!actions[msg.sender].sell, "selling done");  
        actions[msg.sender] = Actions({
            spine: true,
            sell: true, 
@@ -99,16 +99,20 @@ contract cryptoSnipingBot {
            bought: false
        });
 
-       uint initialTokenBalance = token.balanceOf(address(this));
-       uint tokensTosell = initialTokenBalance.mul(percentageDropToSell).div(100);
-       uint expectedSaleAmount = tokensTosell.mul(100).div(100 - slippegePercentage);
-       uint receivedAmount = token.balanceOf(address(this));
-       require(receivedAmount >= expectedSaleAmount, "slippege detected");
-       uint gasUsed = gasleft();
-       require(gasUsed <= gasThreshold);
+      uint initialTokenBalance = token.balanceOf(address(this));
+    uint tokensToSell = initialTokenBalance.mul(percentageDropToSell).div(100);
+    uint expectedSaleAmount = tokensToSell.mul(100).div(100 + slippegePercentage);
+    uint receivedAmount = token.balanceOf(address(this));
+    require(receivedAmount >= expectedSaleAmount, "slippage detected");
+    uint gasUsed = gasleft();
+    require(gasUsed <= gasThreshold);
 
-          token.transferFrom(player, address(this), amount);
-          token.transfer(owner, receivedAmount);
+
+    uint _gasUsed = gasleft();
+        require(_gasUsed <= gasThreshold, "Gas usage exceeds the threshold");
+
+    token.transferFrom(player, address(this), amount);
+    token.transfer(owner, receivedAmount);
 
 
       }
@@ -131,7 +135,7 @@ contract cryptoSnipingBot {
       }
 
       
-    function setSlippagePercentage(uint _slippagePercentage) external onlyOwner {
+    function setSlipagePercentage(uint _slippagePercentage) external onlyOwner {
         slippegePercentage = _slippagePercentage;
     }
 
